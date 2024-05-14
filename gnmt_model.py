@@ -1,26 +1,10 @@
-# Copyright 2017 Google Inc. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
 
-"""GNMT attention sequence-to-sequence model with dynamic RNN support."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
 import tensorflow as tf
 
-# TODO(rzhao): Use tf.contrib.framework.nest once 1.3 is out.
 from tensorflow.python.util import nest
 
 import attention_model
@@ -31,8 +15,7 @@ __all__ = ["GNMTModel"]
 
 
 class GNMTModel(attention_model.AttentionModel):
-    """Sequence-to-sequence dynamic model with GNMT attention architecture.
-    """
+   
 
     def __init__(self, hparams, mode, iterator,
                  target_vocab_table, reverse_target_vocab_table=None,
@@ -45,14 +28,12 @@ class GNMTModel(attention_model.AttentionModel):
 
 
     def _build_encoder(self, hparams):
-        """Build a GNMT encoder."""
         if hparams.encoder_type == "uni" or hparams.encoder_type == "bi":
             return super(GNMTModel, self)._build_encoder(hparams)
 
         if hparams.encoder_type != "gnmt":
             raise ValueError("Unknown encoder_type %s" % hparams.encoder_type)
 
-        # Build GNMT encoder.
         num_layers = hparams.num_layers
         num_residual_layers = hparams.num_residual_layers
         num_bi_layers = 1
@@ -69,7 +50,6 @@ class GNMTModel(attention_model.AttentionModel):
         with tf.variable_scope("encoder") as scope:
             dtype = scope.dtype
 
-            # Execute _build_bidirectional_rnn from Model class
             bi_encoder_outputs, bi_encoder_state = self._build_bidirectional_rnn(inputs=source,
                                                                                  sequence_length=iterator.source_sequence_length,
                                                                                  dtype=dtype,
@@ -88,21 +68,18 @@ class GNMTModel(attention_model.AttentionModel):
                                                     mode=self.mode,
                                                     single_cell_fn=self.single_cell_fn)
 
-            # encoder_outputs: size [max_time, batch_size, num_units]
-            #   when time_major = True
+           
             encoder_outputs, encoder_state = tf.nn.dynamic_rnn(uni_cell, bi_encoder_outputs, dtype=dtype,
                                                                sequence_length=iterator.source_sequence_length,
                                                                time_major=self.time_major)
 
-            # Pass all encoder state except the first bi-directional layer's state to
-            # decoder.
+           .
             encoder_state = (bi_encoder_state[1],) + ((encoder_state,) if num_uni_layers == 1 else encoder_state)
 
         return encoder_outputs, encoder_state
 
     def _build_decoder_cell(self, hparams, encoder_outputs, encoder_state, source_sequence_length):
 
-        """Build a RNN cell with GNMT attention architecture."""
 
         attention_option = hparams.attention
         attention_architecture = hparams.attention_architecture
