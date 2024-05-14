@@ -1,19 +1,3 @@
-# Copyright 2017 Google Inc. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-
-"""Basic sequence-to-sequence model with dynamic RNN support."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -35,24 +19,11 @@ __all__ = ["BaseModel", "Model"]
 
 
 class BaseModel(object):
-    """Sequence-to-sequence base class.
-    """
+   
 
     def __init__(self, hparams, mode, iterator, target_vocab_table, reverse_target_vocab_table=None, scope=None, single_cell_fn=None):
 
-        """Create the model.
-
-        Args:
-          hparams: Hyperparameter configurations.
-          mode: TRAIN | EVAL | INFER
-          iterator: Dataset Iterator that feeds data.
-          target_vocab_table: Lookup table mapping target words to ids.
-          reverse_target_vocab_table: Lookup table mapping ids to target words. Only
-            required in INFER mode. Defaults to None.
-          scope: scope of the model.
-          single_cell_fn: allow for adding customized cell. When not specified,
-            we default to model_helper._single_cell
-        """
+       
 
 
         assert isinstance(iterator, iterator_utils.BatchedInput)
